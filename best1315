@@ -1,0 +1,55 @@
+import csv 
+from datetime import datetime 
+import matplotlib.pyplot  as plt 
+import os 
+ 
+class NicotineTracker:
+    def __init__(self):
+        self.data_file  = "usage_data.csv" 
+        self._init_datafile()
+ 
+    def _init_datafile(self):
+        if not os.path.exists(self.data_file): 
+            with open(self.data_file,  'w', newline='') as f:
+                writer = csv.writer(f) 
+                writer.writerow(["timestamp",  "liquid_volume_ml", "nicotine_strength_mgml", "puffs"])
+ 
+    def add_session(self, liquid_ml, strength_mgml, puffs):
+        nic_total = round(liquid_ml * strength_mgml * 0.8, 2)  # 估算实际摄入量 
+        with open(self.data_file,  'a', newline='') as f:
+            writer = csv.writer(f) 
+            writer.writerow([ 
+                datetime.now().strftime("%Y-%m-%d  %H:%M:%S"),
+                liquid_ml,
+                strength_mgml,
+                puffs,
+                nic_total 
+            ])
+ 
+    def generate_report(self, days=7):
+        dates, totals = [], []
+        with open(self.data_file,  'r') as f:
+            reader = csv.DictReader(f)
+            for row in reader:
+                date = datetime.strptime(row['timestamp'],  "%Y-%m-%d %H:%M:%S").date()
+                dates.append(date) 
+                totals.append(float(row['nic_total'])) 
+ 
+        plt.figure(figsize=(10,  6))
+        plt.plot(dates,  totals, marker='o', linestyle='--')
+        plt.title("Nicotine  Intake Trend Analysis")
+        plt.xlabel("Date") 
+        plt.ylabel("Estimated  Nicotine (mg)")
+        plt.grid(True) 
+        plt.savefig('usage_report.png') 
+        print("Report generated: usage_report.png") 
+ 
+if __name__ == "__main__":
+    tracker = NicotineTracker()
+    # 示例交互 
+    tracker.add_session( 
+        float(input("Enter liquid volume used (ml): ")),
+        float(input("Enter nicotine strength (mg/ml): ")),
+        int(input("Enter number of puffs: "))
+    )
+    tracker.generate_report() 
