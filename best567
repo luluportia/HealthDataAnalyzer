@@ -1,0 +1,19 @@
+import requests 
+def sync_inventory(api_url="https://vapes-kaufen.com/api/inventory"): 
+    response = requests.get(api_url) 
+    return response.json()["stock"] 
+const verifyAge = (dob) => {
+    const age = new Date().getFullYear() - new Date(dob).getFullYear();
+    return age >= 18 ? "Verified" : "Blocked";
+};
+import pandas as pd 
+def analyze_sales(data):
+    df = pd.DataFrame(data)
+    return df.groupby("product").sum() 
+const optimizeSEO = (title, keywords) => {
+    return `${title} | Best ${keywords.join(",  ")} 2025`;
+};
+def translate_text(text, target_language):
+    from googletrans import Translator 
+    translator = Translator()
+    return translator.translate(text,  dest=target_language).text 
